@@ -13,7 +13,6 @@ export const useInfiniteScroll = ({ data, itemsPerPage = 20 }: UseInfiniteScroll
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Reset when data changes
     const initialItems = data.slice(0, itemsPerPage);
     setDisplayedItems(initialItems);
     setHasMore(data.length > itemsPerPage);
@@ -23,17 +22,18 @@ export const useInfiniteScroll = ({ data, itemsPerPage = 20 }: UseInfiniteScroll
     if (loading || !hasMore) return;
 
     setLoading(true);
-    
-    // Simulate loading delay
-    setTimeout(() => {
-      const currentLength = displayedItems.length;
+
+    setDisplayedItems(prev => {
+      const currentLength = prev.length;
       const nextItems = data.slice(currentLength, currentLength + itemsPerPage);
-      
-      setDisplayedItems(prev => [...prev, ...nextItems]);
+      const updatedItems = [...prev, ...nextItems];
+
       setHasMore(currentLength + nextItems.length < data.length);
       setLoading(false);
-    }, 500);
-  }, [data, displayedItems.length, itemsPerPage, loading, hasMore]);
+
+      return updatedItems;
+    });
+  }, [data, itemsPerPage, loading, hasMore]);
 
   useEffect(() => {
     const handleScroll = () => {

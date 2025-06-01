@@ -1,5 +1,6 @@
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Superhero } from "@/types/superhero";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ interface SuperheroCardProps {
 
 const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
   const navigate = useNavigate();
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const getAlignmentColor = (alignment: string) => {
     switch (alignment) {
@@ -34,7 +36,8 @@ const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
           <img
             src={superhero.images.md}
             alt={superhero.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onLoad={() => setIsImageLoaded(true)}
+            className={`${isImageLoaded ? 'blur-0' : 'blur-md'} w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`}
             onError={(e) => {
               e.currentTarget.src = "/placeholder.svg";
             }}

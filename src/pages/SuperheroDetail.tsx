@@ -1,23 +1,23 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import PowerStats from "@/components/PowerStats";
+import ThemeToggle from "@/components/ThemeToggle";
 import { superheroes } from "@/data/superheroes";
 
 const SuperheroDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  
+
   const superhero = superheroes.find(hero => hero.slug === slug);
 
   if (!superhero) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Superhero not found</h1>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">Superhero not found</h1>
           <Button onClick={() => navigate("/")}>Go back home</Button>
         </div>
       </div>
@@ -38,17 +38,26 @@ const SuperheroDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <Button 
-          variant="ghost" 
-          className="mb-6"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Heroes
-        </Button>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/")}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Heroes
+            </Button>
+            <ThemeToggle />
+          </div>
+        </div>
+      </header>
 
+      {/* Content */}
+      <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Hero Image and Basic Info */}
           <div className="lg:col-span-1">
