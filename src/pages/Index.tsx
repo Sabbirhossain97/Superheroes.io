@@ -3,9 +3,12 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { X, Loader2 } from "lucide-react";
 import SuperheroCard from "@/components/SuperheroCard";
 import ThemeToggle from "@/components/ThemeToggle";
 import { superheroes } from "@/data/superheroes";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,6 +29,19 @@ const Index = () => {
     return matchesSearch && matchesPublisher && matchesAlignment;
   });
 
+  const { displayedItems, hasMore, loading } = useInfiniteScroll({ 
+    data: filteredSuperheroes,
+    itemsPerPage: 20 
+  });
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setSelectedPublisher("all");
+    setSelectedAlignment("all");
+  };
+
+  const hasActiveFilters = searchTerm || selectedPublisher !== "all" || selectedAlignment !== "all";
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -44,7 +60,7 @@ const Index = () => {
       {/* Filters */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="flex-1">
+          <div className="flex-1 max-w-md">
             <Input
               placeholder="Search superheroes..."
               value={searchTerm}
@@ -52,7 +68,7 @@ const Index = () => {
               className="w-full"
             />
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <Select value={selectedPublisher} onValueChange={setSelectedPublisher}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Publisher" />
@@ -78,13 +94,26 @@ const Index = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            {hasActiveFilters && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearFilters}
+                className="gap-1"
+              >
+                <X className="h-4 w-4" />
+                Clear
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Results info */}
         <div className="flex items-center gap-2 mb-6">
           <span className="text-sm text-muted-foreground">
-            Showing {filteredSuperheroes.length} of {superheroes.length} superheroes
+            Showing {displayedItems.length} of {filteredSuperheroes.length} superheroes
+            {filteredSuperheroes.length !== superheroes.length && ` (filtered from ${superheroes.length} total)`}
           </span>
           {selectedPublisher !== "all" && (
             <Badge variant="secondary" className="text-xs">
@@ -100,10 +129,25 @@ const Index = () => {
 
         {/* Superhero Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {filteredSuperheroes.map((superhero) => (
+          {displayedItems.map((superhero) => (
             <SuperheroCard key={superhero.id} superhero={superhero} />
           ))}
         </div>
+
+        {/* Loading indicator */}
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-muted-foreground">Loading more superheroes...</span>
+          </div>
+        )}
+
+        {/* No more data indicator */}
+        {!hasMore && displayedItems.length > 0 && (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">You've reached the end! 🦸‍♂️</p>
+          </div>
+        )}
 
         {/* No results */}
         {filteredSuperheroes.length === 0 && (
