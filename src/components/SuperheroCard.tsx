@@ -11,7 +11,7 @@ interface SuperheroCardProps {
 
 const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
   const navigate = useNavigate();
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const getAlignmentColor = (alignment: string) => {
     switch (alignment) {
@@ -36,11 +36,12 @@ const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
           <img
             src={superhero.images.md}
             alt={superhero.name}
-            onLoad={() => setIsImageLoaded(true)}
-            className={`${isImageLoaded ? 'blur-0' : 'blur-md'} w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`}
+            className={`${imageLoading ? 'blur-xl' : 'blur-0'} w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`}
             onError={(e) => {
               e.currentTarget.src = "/placeholder.svg";
+              setImageLoading(false);
             }}
+            onLoad={() => setImageLoading(false)}
           />
         </div>
         <div className="p-4">

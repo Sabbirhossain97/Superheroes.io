@@ -1,4 +1,3 @@
-
 import { Progress } from "@/components/ui/progress";
 import { PowerStats as PowerStatsType } from "@/types/superhero";
 
@@ -25,7 +24,7 @@ const PowerStats = ({ powerstats }: PowerStatsProps) => {
             <span className="text-sm font-medium">{stat.name}</span>
             <span className="text-sm text-muted-foreground">{stat.value}/100</span>
           </div>
-          <Progress value={stat.value} className="h-2" />
+          <Progress value={stat.value} className="h-2" indicatorClassName={stat.color} />
         </div>
       ))}
     </div>

@@ -1,13 +1,19 @@
-import { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState, useMemo, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { X, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import SuperheroCard from "@/components/SuperheroCard";
 import ThemeToggle from "@/components/ThemeToggle";
 import { superheroes } from "@/data/superheroes";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
+import FilterOptions from "@/components/FilterOptions";
+
+// Pre-compute unique values for filters
+const FILTER_OPTIONS = {
+  publishers: ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.publisher)))],
+  alignments: ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.alignment)))],
+  genders: ["all", ...Array.from(new Set(superheroes.map(hero => hero.appearance.gender)))],
+  races: ["all", ...Array.from(new Set(superheroes.map(hero => hero.appearance.race)))]
+};
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,59 +22,44 @@ const Index = () => {
   const [selectedGender, setSelectedGender] = useState<string>("all");
   const [selectedRace, setSelectedRace] = useState<string>("all");
 
-  const publishers = useMemo(() => {
-    return ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.publisher)))];
-  }, [superheroes]);
+  // Memoize the filter function
+  const filterHero = useCallback((hero: typeof superheroes[0]) => {
+    const matchesSearch =
+      hero.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      hero.biography.fullName.toLowerCase().includes(searchTerm.toLowerCase());
 
-  const alignments = useMemo(() => {
-    return ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.alignment)))];
-  }, [superheroes]);
+    const matchesPublisher =
+      selectedPublisher === "all" || hero.biography.publisher === selectedPublisher;
 
-  const genders = useMemo(() => {
-    return ["all", ...Array.from(new Set(superheroes.map(hero => hero.appearance.gender)))];
-  }, [superheroes]);
+    const matchesAlignment =
+      selectedAlignment === "all" || hero.biography.alignment === selectedAlignment;
 
-  const races = useMemo(() => {
-    return ["all", ...Array.from(new Set(superheroes.map(hero => hero.appearance.race)))];
-  }, [superheroes]);
+    const matchesGender =
+      selectedGender === "all" || hero.appearance.gender === selectedGender;
 
+    const matchesRace =
+      selectedRace === "all" || hero.appearance.race === selectedRace;
 
+    return matchesSearch && matchesPublisher && matchesAlignment && matchesGender && matchesRace;
+  }, [searchTerm, selectedPublisher, selectedAlignment, selectedGender, selectedRace]);
+
+  // Memoize filtered superheroes
   const filteredSuperheroes = useMemo(() => {
-    return superheroes.filter(hero => {
-      const matchesSearch =
-        hero.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        hero.biography.fullName.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesPublisher =
-        selectedPublisher === "all" || hero.biography.publisher === selectedPublisher;
-
-      const matchesAlignment =
-        selectedAlignment === "all" || hero.biography.alignment === selectedAlignment;
-
-      const matchesGender =
-        selectedGender === "all" || hero.appearance.gender === selectedGender;
-
-      const matchesRace =
-        selectedRace === "all" || hero.appearance.race === selectedRace;
-
-      return matchesSearch && matchesPublisher && matchesAlignment && matchesGender && matchesRace;
-    });
-  }, [superheroes, searchTerm, selectedPublisher, selectedAlignment, selectedGender, selectedRace]);
+    return superheroes.filter(filterHero);
+  }, [filterHero]);
 
   const { displayedItems, hasMore, loading } = useInfiniteScroll({
     data: filteredSuperheroes,
     itemsPerPage: 20
   });
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchTerm("");
     setSelectedPublisher("all");
     setSelectedAlignment("all");
     setSelectedGender("all");
     setSelectedRace("all");
-  };
-
-  const hasActiveFilters = searchTerm || selectedPublisher !== "all" || selectedAlignment !== "all" || selectedGender !== "all" || selectedRace !== "all";
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,84 +78,23 @@ const Index = () => {
 
       {/* Filters */}
       <div className="container mx-auto px-4 py-10">
-        <div className="flex flex-col lg:flex-row gap-4 mb-8">
-          <div className="w-full xl:w-1/3">
-            <Input
-              id="searchbar"
-              placeholder="Search superheroes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="flex flex-wrap lg:flex-nowrap gap-4 items-center w-full xl:w-2/3">
-            <Select value={selectedPublisher} onValueChange={setSelectedPublisher}>
-              <SelectTrigger className="[@media(max-width:500px)]:w-full w-1/3 md:w-48">
-                <SelectValue placeholder="Publisher" />
-              </SelectTrigger>
-              <SelectContent>
-                {publishers
-                  .filter(p => p !== "")
-                  .map(publisher => (
-                    <SelectItem key={publisher} value={publisher}>
-                      {publisher === "all" ? "All Publishers" : publisher}
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedAlignment} onValueChange={setSelectedAlignment}>
-              <SelectTrigger className="[@media(max-width:500px)]:w-full w-1/3 md:w-48">
-                <SelectValue placeholder="Alignment" />
-              </SelectTrigger>
-              <SelectContent>
-                {alignments.map(alignment => (
-                  <SelectItem key={alignment} value={alignment}>
-                    {alignment === "all" ? "All Alignments" : alignment}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedGender} onValueChange={setSelectedGender}>
-              <SelectTrigger className="[@media(max-width:500px)]:w-full w-1/3 md:w-48">
-                <SelectValue placeholder="Alignment" />
-              </SelectTrigger>
-              <SelectContent>
-                {genders.map(gender => (
-                  <SelectItem key={gender} value={gender}>
-                    {gender === "all" ? "All Genders" : gender}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedRace} onValueChange={setSelectedRace}>
-              <SelectTrigger className="[@media(max-width:500px)]:w-full w-1/3 md:w-48">
-                <SelectValue placeholder="Alignment" />
-              </SelectTrigger>
-              <SelectContent>
-                {races.map(race => (
-                  <SelectItem key={race} value={race}>
-                    {race === "all" ? "All Races" : race}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {hasActiveFilters && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearFilters}
-                className="gap-1"
-              >
-                <X className="h-4 w-4" />
-                Clear
-              </Button>
-            )}
-          </div>
-        </div>
+        <FilterOptions
+          publishers={FILTER_OPTIONS.publishers}
+          alignments={FILTER_OPTIONS.alignments}
+          genders={FILTER_OPTIONS.genders}
+          races={FILTER_OPTIONS.races}
+          searchTerm={searchTerm}
+          selectedPublisher={selectedPublisher}
+          selectedAlignment={selectedAlignment}
+          selectedGender={selectedGender}
+          selectedRace={selectedRace}
+          onSearchChange={setSearchTerm}
+          onPublisherChange={setSelectedPublisher}
+          onAlignmentChange={setSelectedAlignment}
+          onGenderChange={setSelectedGender}
+          onRaceChange={setSelectedRace}
+          onClearFilters={clearFilters}
+        />
 
         {/* Results info */}
         <div className="flex items-center gap-2 mb-6">
