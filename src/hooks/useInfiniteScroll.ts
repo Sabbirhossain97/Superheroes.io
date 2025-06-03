@@ -23,17 +23,16 @@ export const useInfiniteScroll = ({ data, itemsPerPage = 20 }: UseInfiniteScroll
 
     setLoading(true);
 
-    setDisplayedItems(prev => {
-      const currentLength = prev.length;
+    setTimeout(() => {
+      const currentLength = displayedItems.length;
       const nextItems = data.slice(currentLength, currentLength + itemsPerPage);
-      const updatedItems = [...prev, ...nextItems];
-
-      setHasMore(currentLength + nextItems.length < data.length);
+      const updatedItems = [...displayedItems, ...nextItems];
+      setDisplayedItems(updatedItems);
+      setHasMore(updatedItems.length < data.length);
       setLoading(false);
-
-      return updatedItems;
-    });
-  }, [data, itemsPerPage, loading, hasMore]);
+    }, 2000);
+    
+  }, [data, displayedItems, itemsPerPage, loading, hasMore]);
 
   useEffect(() => {
     const handleScroll = () => {

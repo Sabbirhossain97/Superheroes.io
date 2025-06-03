@@ -38,10 +38,7 @@ export interface Connections {
 }
 
 export interface Images {
-  xs: string;
-  sm: string;
-  md: string;
-  lg: string;
+  url: string;
 }
 
 export interface Superhero {
@@ -53,5 +50,6 @@ export interface Superhero {
   biography: Biography;
   work: Work;
   connections: Connections;
-  images: Images;
+  image: Images;
 }
+

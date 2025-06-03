@@ -6,8 +6,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { superheroes } from "@/data/superheroes";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 import FilterOptions from "@/components/FilterOptions";
+import ScrollToTop from "@/components/ScrollToTop";
 
-// Pre-compute unique values for filters
 const FILTER_OPTIONS = {
   publishers: ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.publisher)))],
   alignments: ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.alignment)))],
@@ -22,7 +22,6 @@ const Index = () => {
   const [selectedGender, setSelectedGender] = useState<string>("all");
   const [selectedRace, setSelectedRace] = useState<string>("all");
 
-  // Memoize the filter function
   const filterHero = useCallback((hero: typeof superheroes[0]) => {
     const matchesSearch =
       hero.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,7 +42,6 @@ const Index = () => {
     return matchesSearch && matchesPublisher && matchesAlignment && matchesGender && matchesRace;
   }, [searchTerm, selectedPublisher, selectedAlignment, selectedGender, selectedRace]);
 
-  // Memoize filtered superheroes
   const filteredSuperheroes = useMemo(() => {
     return superheroes.filter(filterHero);
   }, [filterHero]);
@@ -68,7 +66,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Superhero.io</h1>
+              <h1 className="text-3xl font-bold text-foreground">Superheroes.io</h1>
               <p className="text-muted-foreground mt-1">Discover your favorite superheroes</p>
             </div>
             <ThemeToggle />
@@ -97,21 +95,33 @@ const Index = () => {
         />
 
         {/* Results info */}
-        <div className="flex items-center gap-2 mb-6">
-          <span className="text-sm text-muted-foreground">
+        <div className="flex flex-col md:flex-row md:justify-between items-center gap-2 mb-6">
+          <span className="text-sm order-2 md:order-1 text-muted-foreground">
             Showing {displayedItems.length} of {filteredSuperheroes.length} superheroes
             {filteredSuperheroes.length !== superheroes.length && ` (filtered from ${superheroes.length} total)`}
           </span>
-          {selectedPublisher !== "all" && (
-            <Badge variant="secondary" className="text-xs">
-              Publisher: {selectedPublisher}
-            </Badge>
-          )}
-          {selectedAlignment !== "all" && (
-            <Badge variant="secondary" className="text-xs">
-              Alignment: {selectedAlignment}
-            </Badge>
-          )}
+          <div className="flex flex-wrap justify-center sm:flex-nowrap gap-2 order-1 md:order-2">
+            {selectedPublisher !== "all" && (
+              <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                Publisher: {selectedPublisher}
+              </Badge>
+            )}
+            {selectedAlignment !== "all" && (
+              <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                Alignment: {selectedAlignment}
+              </Badge>
+            )}
+            {selectedGender !== "all" && (
+              <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                Gender: {selectedGender}
+              </Badge>
+            )}
+            {selectedRace !== "all" && (
+              <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                Race: {selectedRace}
+              </Badge>
+            )}
+          </div>
         </div>
 
         {/* Superhero Grid */}
@@ -144,6 +154,7 @@ const Index = () => {
           </div>
         )}
       </div>
+      <ScrollToTop />
     </div>
   );
 };

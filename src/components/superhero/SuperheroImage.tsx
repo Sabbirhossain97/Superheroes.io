@@ -19,7 +19,7 @@ const SuperheroImage = ({ superhero, getAlignmentColor }: SuperheroImageProps) =
             <div className="absolute inset-0 bg-muted animate-pulse rounded-t-lg" />
           )}
           <img
-            src={superhero.images.lg}
+            src={superhero.image.url}
             alt={superhero.name}
             loading="lazy"
             className={`w-full h-96 object-cover rounded-t-lg transition-opacity duration-300 ${

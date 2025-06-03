@@ -27,14 +27,14 @@ const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
   };
 
   return (
-    <Card 
+    <Card
       className="hover:shadow-lg transition-shadow cursor-pointer group"
       onClick={() => navigate(`/superhero/${superhero.slug}`)}
     >
       <CardContent className="p-0">
         <div className="aspect-square overflow-hidden rounded-t-lg">
           <img
-            src={superhero.images.md}
+            src={superhero.image.url}
             alt={superhero.name}
             className={`${imageLoading ? 'blur-xl' : 'blur-0'} w-full h-full object-cover group-hover:scale-105 transition-transform duration-300`}
             onError={(e) => {
@@ -52,7 +52,10 @@ const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
             {superhero.biography.fullName}
           </p>
           <div className="flex items-center gap-2 mb-2">
-            <Badge variant="outline">{superhero.biography.publisher}</Badge>
+            <Badge variant="outline">
+              {/* {`Publisher: ${superhero.biography.publisher}`} */}
+              {superhero.biography.publisher === "Unknown" ? `Publisher: ${superhero.biography.publisher}` : `${superhero.biography.publisher}`}
+            </Badge>
             <Badge className={getAlignmentColor(superhero.biography.alignment)}>
               {superhero.biography.alignment}
             </Badge>
