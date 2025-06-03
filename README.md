@@ -14,6 +14,7 @@ Built with ❤️ using [Lovable AI](https://lovable.dev), it blends modern web 
 - 🎨 Styled with **TailwindCSS**
 - 💡 Accessible components powered by **Radix UI** + **shadcn/ui**
 - ⚡ Blazing fast, clean, and responsive UI
+- 📜 Infinite scrolling: Loads 20 superheroes at a time as you scroll for seamless browsing
 
 ---
 
