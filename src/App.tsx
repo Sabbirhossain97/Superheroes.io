@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
 import SuperheroDetail from "./pages/SuperheroDetail";
 import NotFound from "./pages/NotFound";
+import Compare from "./pages/Compare";
 
 const queryClient = new QueryClient();
 
@@ -17,8 +18,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/compare" element={<Compare />} />
             <Route path="/superhero/:slug" element={<SuperheroDetail />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -1,15 +1,17 @@
-
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Superhero } from "@/types/superhero";
 import { useNavigate } from "react-router-dom";
+import { GitCompareArrows } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SuperheroCardProps {
   superhero: Superhero;
+  addToCompare: (hero: Superhero) => void
 }
 
-const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
+const SuperheroCard = ({ superhero, addToCompare }: SuperheroCardProps) => {
   const navigate = useNavigate();
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -32,7 +34,7 @@ const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
       onClick={() => navigate(`/superhero/${superhero.slug}`)}
     >
       <CardContent className="p-0">
-        <div className="aspect-square overflow-hidden rounded-t-lg">
+        <div className="aspect-square overflow-hidden rounded-t-lg relative">
           <img
             src={superhero.image.url}
             alt={superhero.name}
@@ -43,6 +45,16 @@ const SuperheroCard = ({ superhero }: SuperheroCardProps) => {
             }}
             onLoad={() => setImageLoading(false)}
           />
+          <Button
+            variant="outline"
+            onClick={(e) => {
+              e.stopPropagation();
+              addToCompare(superhero);
+            }}
+            className="gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 absolute top-2 right-2"
+          >
+            <GitCompareArrows className="h-10 w-10" />
+          </Button>
         </div>
         <div className="p-4">
           <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
