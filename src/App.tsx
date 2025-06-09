@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -14,15 +13,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <TooltipProvider>
-        <Toaster />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/compare" element={<Compare />} />
-            <Route path="/superhero/:slug" element={<SuperheroDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/compare" element={<Compare />} />
+              <Route path="/superhero/:slug" element={<SuperheroDetail />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
