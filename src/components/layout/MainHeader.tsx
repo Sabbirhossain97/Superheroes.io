@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { GitCompareArrows } from "lucide-react";
-import ThemeToggle from "@/components/ThemeToggle";
+import ThemeToggle from "@/components/helpers/ThemeToggle";
 import EmptyCompareAlert from "./EmptyCompareAlert";
 import CompareAddWarning from "./CompareAddWarning";
 
@@ -12,7 +12,7 @@ function MainHeader({ compareList }) {
     const navigate = useNavigate();
 
     const handlenavigate = () => {
-        if(compareList.length === 0) {
+        if (compareList.length === 0) {
             setOpen(true);
             return
         }

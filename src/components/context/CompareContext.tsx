@@ -9,8 +9,8 @@ import {
 
 interface CompareContextType {
     compareList: Superhero[];
+    setCompareList: React.Dispatch<React.SetStateAction<Superhero[]>>
     addToCompare: (hero: Superhero) => void;
-    removeFromCompare: (id: number) => void;
     clearCompareList: () => void;
 }
 
@@ -37,10 +37,6 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
         );
     };
 
-    const removeFromCompare = (id: number) => {
-        setCompareList(prev => prev.filter(item => item.id !== id));
-    };
-
     const clearCompareList = () => {
         setCompareList([]);
         setIsCompareDeleted(true)
@@ -48,7 +44,7 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <CompareContext.Provider
-            value={{ compareList, addToCompare, removeFromCompare, clearCompareList }}
+            value={{ compareList, setCompareList, addToCompare, clearCompareList }}
         >
             {children}
             <Toast open={open} onOpenChange={setOpen}>

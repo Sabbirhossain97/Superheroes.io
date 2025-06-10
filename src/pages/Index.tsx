@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
-import SuperheroCard from "@/components/SuperheroCard";
+import SuperheroCard from "@/components/superhero/SuperheroCard";
 import { superheroes } from "@/data/superheroes";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import FilterOptions from "@/components/FilterOptions";
-import ScrollToTop from "@/components/ScrollToTop";
+import FilterOptions from "@/components/filters/FilterOptions";
+import ScrollToTop from "@/components/helpers/ScrollToTop";
 import MainHeader from "@/components/layout/MainHeader";
 import { useCompare } from "@/components/context/CompareContext";
 

@@ -1,107 +1,26 @@
 import { useCompare } from '@/components/context/CompareContext'
 import SuperheroHeader from '@/components/superhero/SuperheroHeader';
-import { Shield, Users, MapPin, Calendar, Briefcase, Heart, Eye, Zap, Target, Activity, Gauge, Trash2, Sword } from 'lucide-react';
+import { Shield, Users, RotateCcw, MapPin, Calendar, Briefcase, Heart, Eye, Zap, Target, Activity, Gauge, Trash2, Sword } from 'lucide-react';
 import { PowerStats } from '@/types/superhero';
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-
-const PowerBar: React.FC<{ value: number; color: string; maxValue?: number }> = ({ value, color, maxValue = 100 }) => (
-    <div className="flex items-center space-x-3">
-        <div className="w-24 bg-gray-800 rounded-full h-2 border border-gray-700">
-            <div
-                className={`h-[6px] rounded-full transition-all duration-1000 ease-out ${color}`}
-                style={{ width: `${(value / maxValue) * 100}%` }}
-            ></div>
-        </div>
-        <span className="text-sm font-bold dark;text-white w-8">{value}</span>
-    </div>
-);
-
-const AlignmentBadge: React.FC<{ alignment: string }> = ({ alignment }) => {
-    const badgeClasses = alignment === 'good'
-        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-        : alignment === 'bad'
-            ? 'bg-red-500/20 text-red-400 border-red-500/30'
-            : 'bg-gray-500/20 text-gray-400 border-gray-500/30';
-
-    return (
-        <span className={`inline-flex text-gray-700 dark:text-gray-400 items-center px-3 py-1 rounded-full text-xs font-semibold border ${badgeClasses}`}>
-            <Shield className="w-3 h-3 mr-1" />
-            {alignment.charAt(0).toUpperCase() + alignment.slice(1)}
-        </span>
-    );
-};
-
-const PublisherBadge: React.FC<{ publisher: string }> = ({ publisher }) => {
-    const isMarvel = publisher.includes('Marvel');
-    const isDC = publisher.includes('DC');
-
-    const badgeClasses = isMarvel
-        ? 'bg-red-500/20 text-red-400 border-red-500/30'
-        : isDC
-            ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-            : 'bg-purple-500/20 text-purple-400 border-purple-500/30';
-
-    return (
-        <span className={`inline-flex whitespace-nowrap items-center px-3 py-1 rounded-full text-xs font-semibold border ${badgeClasses}`}>
-            <Briefcase className="w-3 h-3 mr-1" />
-            {publisher}
-        </span>
-    );
-};
-
-const ComparisonRow: React.FC<{
-    label: string;
-    icon: React.ReactNode;
-    values: (string | React.ReactNode)[];
-    className?: string;
-}> = ({ label, icon, values, className = "" }) => (
-    <>
-        <tr className={`border-b hidden md:table-row text-center dark:border-gray-800 transition-all duration-200 ${className}`}>
-            <td className="px-6 py-4 text-sm font-semibold bg-gray-100/80 dark:text-gray-300 dark:bg-gray-900/50 w-1/4">
-                <div className="flex items-center space-x-3">
-                    <div className="dark:text-blue-400">{icon}</div>
-                    <span className='whitespace-nowrap'>{label}</span>
-                </div>
-            </td>
-            {values.map((value, index) => (
-                <td key={index} className="px-6 py-4 text-sm dark:text-gray-200 ">
-                    {value}
-                </td>
-            ))}
-        </tr>
-        <tr className='w-full md:hidden'>
-            <td colSpan={2}>
-                <div className="flex py-4 dark:bg-gray-900 items-center justify-center space-x-3">
-                    <div className="text-blue-400">{icon}</div>
-                    <span className='whitespace-nowrap'>{label}</span>
-                </div>
-                <div className='flex justify-between px-0 sm:px-10 md:px-20'>
-                    {values.map((value, index) => (
-                        <div key={index} className="px-6 py-4 text-sm bg-transparent bg-red-500 text-gray-200 ">
-                            {value}
-                        </div>
-                    ))}
-                </div>
-            </td>
-        </tr>
-    </>
-);
-
-const SectionHeader: React.FC<{ title: string; icon: React.ReactNode }> = ({ title, icon }) => (
-    <tr className="dark:bg-slate-800 bg-gray-200">
-        <td colSpan={3} className="px-6 py-4 text-left">
-            <div className="flex items-center justify-center md:justify-start space-x-3">
-                <div className="dark:text-white p-1 rounded-lg">{icon}</div>
-                <h3 className="text-lg font-bold dark:text-white tracking-wide">{title}</h3>
-            </div>
-        </td>
-    </tr>
-);
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { ComparisonRow } from '@/components/layout/compare/ComparisonRow';
+import { SectionHeader } from '@/components/layout/compare/SectionHeader';
+import { HeroSelector } from '@/components/layout/compare/HeroSelector';
+import { PowerBar } from '@/components/layout/compare/PowerBar';
+import { AlignmentBadge } from '@/components/layout/compare/AlignmentBadge';
+import { PublisherBadge } from '@/components/layout/compare/PublisherBadge';
 
 function Compare() {
-    const { compareList, clearCompareList } = useCompare();
+    const { compareList, setCompareList, clearCompareList } = useCompare();
     const navigate = useNavigate();
     const [show, setShow] = useState(false);
 
@@ -166,6 +85,7 @@ function Compare() {
                             </div>
                             <div className="text-center">
                                 <div className="text-xl whitespace-nowrap font-bold dark:text-white mb-1">{hero.name}</div>
+
                             </div>
                         </div>
                     ))}
@@ -177,7 +97,7 @@ function Compare() {
                                 <th className="px-6 py-6 text-left hidden md:table-row text-xs font-bold text-gray-400 uppercase tracking-wider w-1/4">
                                     {""}
                                 </th>
-                                {compareList.map((hero) => (
+                                {compareList.map((hero, index) => (
                                     <th key={hero.id} className="sm:px-10 py-6 text-center">
                                         <div className="flex flex-col items-center space-y-4">
                                             <div className="relative">
@@ -189,6 +109,28 @@ function Compare() {
                                             </div>
                                             <div className="text-center">
                                                 <div className="text-xl font-bold dark:text-white mb-1">{hero.name}</div>
+                                                <Dialog>
+                                                    <DialogTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="gap-2 h-9"
+                                                        >
+                                                            <RotateCcw />
+                                                            Change
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent>
+                                                        <DialogHeader className='hidden'>
+                                                            <DialogTitle>Are you sure?</DialogTitle>
+                                                        </DialogHeader>
+                                                        <HeroSelector
+                                                            currentHero={hero}
+                                                            currentList={compareList}
+                                                            setCurrentList={setCompareList}
+                                                            position={index}
+                                                        />
+                                                    </DialogContent>
+                                                </Dialog>
                                             </div>
                                         </div>
                                     </th>
@@ -327,7 +269,7 @@ function Compare() {
                                 label="Occupation"
                                 icon={<Briefcase className="w-4 h-4" />}
                                 values={compareList.map(hero => (
-                                    <div className="text-xs text-gray-700 bg-gray-200 dark:text-gray-300 leading-relaxed bg-gray-800/50 p-2 rounded">
+                                    <div className="text-xs text-gray-700 bg-gray-200 dark:text-gray-300 leading-relaxed dark:bg-gray-800/50 p-2 rounded">
                                         {hero.work.occupation}
                                     </div>
                                 ))}
@@ -337,7 +279,7 @@ function Compare() {
                                 label="Base of Operations"
                                 icon={<MapPin className="w-4 h-4" />}
                                 values={compareList.map(hero => (
-                                    <span className="inline-flex items-center text-gray-700 bg-gray-200 dark:text-gray-300 px-4 py-2 rounded text-xs font-semibold bg-gray-800/50">
+                                    <span className="inline-flex items-center text-gray-700 bg-gray-200 dark:text-gray-300 px-4 py-2 rounded text-xs font-semibold dark:bg-gray-800/50">
                                         {hero.work.base}
                                     </span>
                                 ))}
@@ -347,7 +289,7 @@ function Compare() {
                                 label="Team Affiliations"
                                 icon={<Users className="w-4 h-4" />}
                                 values={compareList.map(hero => (
-                                    <div className="text-xs text-gray-700 bg-gray-200 dark:text-gray-300 leading-relaxed bg-gray-800/50 p-2 rounded">
+                                    <div className="text-xs text-gray-700 bg-gray-200 dark:text-gray-300 leading-relaxed dark:bg-gray-800/50 p-2 rounded">
                                         {hero.connections.groupAffiliation}
                                     </div>
                                 ))}
@@ -360,7 +302,7 @@ function Compare() {
                                 label="Family & Relations"
                                 icon={<Heart className="w-4 h-4" />}
                                 values={compareList.map(hero => (
-                                    <div className="text-xs text-gray-700 bg-gray-200 dark:text-gray-300 leading-relaxed bg-gray-800/50 p-2 rounded">
+                                    <div className="text-xs text-gray-700 bg-gray-200 dark:text-gray-300 leading-relaxed dark:bg-gray-800/50 p-2 rounded">
                                         {hero.connections.relatives}
                                     </div>
                                 ))}
