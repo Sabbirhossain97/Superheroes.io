@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import PowerStats from "@/components/PowerStats";
+import PowerStats from "@/components/superhero/PowerStats";
 import { Superhero } from "@/types/superhero";
 
 interface SuperheroDetailsProps {

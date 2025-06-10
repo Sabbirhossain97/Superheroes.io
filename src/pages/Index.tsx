@@ -1,12 +1,13 @@
 import { useState, useMemo, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
-import SuperheroCard from "@/components/SuperheroCard";
-import ThemeToggle from "@/components/ThemeToggle";
+import SuperheroCard from "@/components/superhero/SuperheroCard";
 import { superheroes } from "@/data/superheroes";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
-import FilterOptions from "@/components/FilterOptions";
-import ScrollToTop from "@/components/ScrollToTop";
+import FilterOptions from "@/components/filters/FilterOptions";
+import ScrollToTop from "@/components/helpers/ScrollToTop";
+import MainHeader from "@/components/layout/MainHeader";
+import { useCompare } from "@/components/context/CompareContext";
 
 const FILTER_OPTIONS = {
   publishers: ["all", ...Array.from(new Set(superheroes.map(hero => hero.biography.publisher)))],
@@ -16,6 +17,7 @@ const FILTER_OPTIONS = {
 };
 
 const Index = () => {
+  const { compareList, addToCompare } = useCompare();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPublisher, setSelectedPublisher] = useState<string>("all");
   const [selectedAlignment, setSelectedAlignment] = useState<string>("all");
@@ -59,20 +61,10 @@ const Index = () => {
     setSelectedRace("all");
   }, []);
 
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Superheroes.io</h1>
-              <p className="text-muted-foreground mt-1">Discover your favorite superheroes</p>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      <MainHeader compareList={compareList} />
 
       {/* Filters */}
       <div className="container mx-auto px-4 py-10">
@@ -127,7 +119,7 @@ const Index = () => {
         {/* Superhero Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {displayedItems.map((superhero) => (
-            <SuperheroCard key={superhero.id} superhero={superhero} />
+            <SuperheroCard key={superhero.id} superhero={superhero} addToCompare={addToCompare} />
           ))}
         </div>
 

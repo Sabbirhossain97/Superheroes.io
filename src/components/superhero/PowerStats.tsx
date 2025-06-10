@@ -17,7 +17,6 @@ const PowerStats = ({ powerstats }: PowerStatsProps) => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold mb-4">Power Statistics</h3>
       {stats.map((stat) => (
         <div key={stat.name} className="space-y-2">
           <div className="flex justify-between items-center">
