@@ -9,12 +9,13 @@ Built with ❤️ using [Lovable AI](https://lovable.dev), it blends modern web 
 
 ## ✨ Features
 
-- 🤖 AI-generated superhero content with **Lovable AI**
+- 🤖 AI-generated UI with Lovable
 - ⚛️ Built using **React + TypeScript + Vite**
 - 🎨 Styled with **TailwindCSS**
 - 💡 Accessible components powered by **Radix UI** + **shadcn/ui**
 - ⚡ Blazing fast, clean, and responsive UI
 - 📜 Infinite scrolling: Loads 20 superheroes at a time as you scroll for seamless browsing
+- ⚔️ Compare Heroes: Easily compare two superheroes side by side by their information or stats like power, intelligence, and speed
 
 ---
 
@@ -27,14 +28,12 @@ Built with ❤️ using [Lovable AI](https://lovable.dev), it blends modern web 
 
 ## 🧰 Tech Stack
 
-| Tech            | Description                            |
-|-----------------|----------------------------------------|
-| **TypeScript**  | Strongly typed JavaScript              |
-| **React + Vite**| Frontend framework & dev environment   |
-| **Tailwind CSS**| Utility-first styling                  |
-| **Radix UI**    | Unstyled accessible components         |
-| **shadcn/ui**   | Beautiful, ready-to-use UI primitives  |
-| **Lovable AI**  | Built with AI, simplified by prompts   |
+- React+Vite
+- TypeScript
+- Tailwind CSS
+- Shadcn + radix-ui
+- Lovable AI
+- Vercel (Hosting)
 
 ---
 
